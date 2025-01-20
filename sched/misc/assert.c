@@ -969,6 +969,12 @@ void _assert(FAR const char *filename, int linenum,
 
       dump_fatal_info(rtcb, filename, linenum, msg, regs);
 
+      /* Flush dcache before notify other CPU */
+
+      up_flush_dcache_all();
+
+      /* Notify PANIC_KERNEL_FINAL */
+
       panic_notifier_call_chain(PANIC_KERNEL_FINAL, &notifier_data);
 
       /* Dump core information */
