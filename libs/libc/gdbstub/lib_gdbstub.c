@@ -686,19 +686,32 @@ static int gdb_recv_ack(FAR struct gdb_state_s *state)
 static ssize_t gdb_bin2hex(FAR void *buf, size_t buf_len,
                            FAR const void *data, size_t data_len)
 {
-  FAR const char *in = data;
+  size_t skip = (uintptr_t)data % sizeof(uint32_t);
+  FAR const uint32_t *in = (FAR const uint32_t *)((uintptr_t)data - skip);
   FAR char *out = buf;
-  size_t pos;
+  size_t pos = 0;
 
   if (buf_len < data_len * 2)
     {
       return -EOVERFLOW; /* Buffer too small */
     }
 
-  for (pos = 0; pos < data_len; pos++)
+  while (pos < data_len)
     {
-      itoa(in[pos] >> 4 & 0xf, out++, 16);
-      itoa(in[pos] & 0xf, out++, 16);
+      uint8_t bytes[sizeof(uint32_t)];
+      uint32_t word = *in++;
+      size_t i;
+
+      /* Copy the word out to take its bytes in memory order */
+
+      memcpy(bytes, &word, sizeof(word));
+      for (i = skip; i < sizeof(word) && pos < data_len; i++, pos++)
+        {
+          itoa(bytes[i] >> 4 & 0xf, out++, 16);
+          itoa(bytes[i] & 0xf, out++, 16);
+        }
+
+      skip = 0;
     }
 
   return data_len * 2;
