@@ -220,6 +220,13 @@ static void dump_stackinfo(FAR const char *tag, uintptr_t sp,
           sp -= DUMP_STRIDE;
         }
 
+#if CONFIG_ARCH_STACKDUMP_MAX_LENGTH > 0
+      if (top - sp > CONFIG_ARCH_STACKDUMP_MAX_LENGTH)
+        {
+          top = sp + CONFIG_ARCH_STACKDUMP_MAX_LENGTH;
+        }
+#endif
+
       stack_dump(sp, top);
     }
   else
