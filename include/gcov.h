@@ -33,6 +33,17 @@
 #include <sys/types.h>
 
 /****************************************************************************
+ * Preprocessor Definitions
+ ****************************************************************************/
+
+#ifdef CONFIG_LIB_SYSCALL
+#  define GCOV_OP_RESET   1
+#  define GCOV_OP_DUMP    2
+#  define GCOV_OP_MIN     GCOV_OP_RESET
+#  define GCOV_OP_MAX     GCOV_OP_DUMP
+#endif
+
+/****************************************************************************
  * Public Types
  ****************************************************************************/
 
@@ -45,6 +56,23 @@ struct gcov_info;
 #ifdef __cplusplus
 extern "C"
 {
+#endif
+
+#ifdef CONFIG_LIB_SYSCALL
+/****************************************************************************
+ * Name: gcov
+ *
+ * Description:
+ *   Request kernel space gcov data operations.
+ *
+ * Parameters:
+ *   op - operation code between GCOV_OP_MIN and GCOV_OP_MAX
+ *
+ * Return:
+ *   status code.
+ ****************************************************************************/
+
+extern int gcov(int op);
 #endif
 
 /****************************************************************************
