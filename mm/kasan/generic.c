@@ -262,7 +262,7 @@ void kasan_register(FAR void *addr, FAR size_t *size)
   *size -= KASAN_REGION_SIZE(*size);
 }
 
-void kasan_unregister(FAR void *addr)
+void kasan_unregister(FAR void *addr, size_t size)
 {
   irqstate_t flags;
   size_t i;
@@ -272,16 +272,15 @@ void kasan_unregister(FAR void *addr)
     {
       if (g_region[i]->begin == (uintptr_t)addr)
         {
-          size_t size = g_region[i]->end - g_region[i]->begin;
           atomic_sub(&g_region_count, 1);
           g_region[i] = NULL;
           memmove(&g_region[i], &g_region[i + 1],
                   (g_region_count - i) * sizeof(g_region[0]));
           spin_unlock_irqrestore_notrace(&g_lock, flags);
-          kasan_unpoison(addr, size);
           return;
         }
     }
 
   spin_unlock_irqrestore_notrace(&g_lock, flags);
+  kasan_unpoison(addr, size);
 }
