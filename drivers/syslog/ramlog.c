@@ -630,6 +630,9 @@ static int ramlog_file_ioctl(FAR struct file *filep, int cmd,
       case PIPEIOC_POLLINTHRD:
         upriv->rl_threashold = (uint32_t)arg;
         break;
+      case PIPEIOC_GETSIZE:
+        ret = priv->rl_bufsize;
+        break;
       case BIOC_FLUSH:
         ramlog_bufferflush(priv);
         break;
