@@ -883,6 +883,13 @@ config SCHED_DUMP_ON_EXIT
 	---help---
 		Dump all tasks state on exit()
 
+config SCHED_DUMP_FDLIST
+	bool "Dump fd list on assert"
+	default n
+	---help---
+		Dump the file descriptors of all tasks when an assertion fails,
+		and of a task that runs out of file descriptors.
+
 config SCHED_USER_IDENTITY
 	bool "Support per-task User Identity"
 	default n
