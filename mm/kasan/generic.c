@@ -239,8 +239,27 @@ bool kasan_bypass(bool state)
 void kasan_register(FAR void *addr, FAR size_t *size)
 {
   FAR struct kasan_region_s *region;
+  uintptr_t start = (uintptr_t)addr;
+  uintptr_t end = start + *size;
+  size_t count = atomic_read(&g_region_count);
   irqstate_t flags;
   size_t idx;
+  size_t i;
+
+  for (i = 0; i < count; i++)
+    {
+      if (g_region[i] &&
+          start >= g_region[i]->begin &&
+          end <= g_region[i]->end)
+        {
+          /* E.g. a heap made from a block of another heap: the block is
+           * unpoisoned, so poison it in the covering region's shadow.
+           */
+
+          kasan_poison(addr, *size);
+          return;
+        }
+    }
 
   region = (FAR struct kasan_region_s *)
     ((FAR char *)addr + *size - KASAN_REGION_SIZE(*size));
