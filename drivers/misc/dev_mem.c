@@ -25,10 +25,14 @@
  ****************************************************************************/
 
 #include <nuttx/drivers/drivers.h>
+#include <nuttx/fs/fs.h>
 #include <nuttx/kmalloc.h>
 #include <nuttx/memoryregion.h>
+#include <nuttx/mm/map.h>
 #include <sys/param.h>
 #include <sys/mman.h>
+#include <errno.h>
+#include <string.h>
 
 /****************************************************************************
  * Private Data
