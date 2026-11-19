@@ -372,6 +372,7 @@ int syslog_rpmsg_putc(FAR syslog_channel_t *channel, int ch)
 {
   irqstate_t flags;
   char tmp = ch;
+
   UNUSED(channel);
 
   flags = enter_critical_section();
@@ -414,6 +415,7 @@ ssize_t syslog_rpmsg_write(FAR syslog_channel_t *channel,
 {
   FAR struct syslog_rpmsg_s *priv = &g_syslog_rpmsg;
   irqstate_t flags = enter_critical_section();
+
   syslog_rpmsg_addbuf(priv, buffer, buflen);
   leave_critical_section(flags);
 
