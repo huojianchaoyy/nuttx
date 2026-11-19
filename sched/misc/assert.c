@@ -233,13 +233,14 @@ static void dump_stackinfo(FAR const char *tag, uintptr_t sp,
        * that frame; dumping only one stride back omits it, which prevents
        * an offline DWARF/CFI unwinder from crossing the exception boundary
        * into the faulting userspace context.  Backing off a whole register
-       * context (sizeof(last_regs_t) == XCPTCONTEXT byte size) is enough to
-       * include the frame on any architecture, clamped to the stack base.
+       * context (sizeof(g_last_regs[0]) == XCPTCONTEXT byte size) is enough
+       * to include the frame on any architecture, clamped to the stack
+       * base.
        */
 
-      if (sp - sizeof(last_regs_t) >= base)
+      if (sp - sizeof(g_last_regs[0]) >= base)
         {
-          sp -= sizeof(last_regs_t);
+          sp -= sizeof(g_last_regs[0]);
         }
       else
         {
