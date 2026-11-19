@@ -157,6 +157,7 @@ static void backtrace_rehash(FAR struct backtrace_pool_s *bp,
         {
           uint32_t slot = backtrace_hash(entry->stack, entry->depth);
           FAR struct backtrace_entry_s *next = entry->next;
+
           slot = slot % (capacity * 2);
           entry->next = bucket[slot];
           bucket[slot] = entry;
@@ -339,7 +340,7 @@ FAR void *backtrace_record(int skip)
       !bp->expanding
 #if defined(CONFIG_BUILD_FLAT) || defined(__KERNEL__)
       && OSINIT_MM_READY() && !up_interrupt_context() &&
-      (!is_idle_task(nxsched_self()) || !OSINIT_IDLELOOP())
+      (!sched_idletask() || !OSINIT_IDLELOOP())
 #endif
      )
     {
@@ -412,6 +413,7 @@ void backtrace_remove(FAR void *index)
       /* Remove the backtrace record from the linked list */
 
       FAR struct backtrace_entry_s *prev = bp->bucket[slot];
+
       while (prev)
         {
           if (prev->next == entry)
