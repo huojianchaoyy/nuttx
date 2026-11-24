@@ -628,6 +628,13 @@ void sched_note_add(FAR const void *data, size_t len)
           note_add(*driver, note, notelen);
         }
 
+      /* The last note of a packet may come without its padding */
+
+      if (NOTE_ALIGN(notelen) > len)
+        {
+          break;
+        }
+
       /* The note data from note rpmsg is aligned. When parsing
        * the data, it is necessary to align the notelen.
        */
