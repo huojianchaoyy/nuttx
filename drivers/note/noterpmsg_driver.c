@@ -217,9 +217,13 @@ static void noterpmsg_add(FAR struct note_driver_s *driver,
           spin_unlock_irqrestore_notrace(&drv->lock, flags);
           sent = noterpmsg_transfer(drv, true);
           flags = spin_lock_irqsave_notrace(&drv->lock);
+
+          /* Other notes may have filled the buffer while it was unlocked */
+
+          space = CONFIG_DRIVERS_NOTERPMSG_BUFSIZE - noterpmsg_length(drv);
         }
 
-      if (!sent)
+      if (!sent || space < NOTE_ALIGN(notelen))
         {
           /* Overwrite */
 
